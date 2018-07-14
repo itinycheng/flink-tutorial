@@ -18,7 +18,7 @@ class MapStateFunction extends RichMapFunction[(String, Int), (String, Int)] {
     val tmp = state
     val count = tmp.get(value._1) + 1
     tmp.put(value._1, count)
-    val now = LocalDate.now(ZoneId.of("+8"));
+    val now = LocalDate.now(ZoneId.of("+8"))
     tmp.put("year", now.getYear)
     tmp.put("month", now.getMonthValue)
     tmp.put("day", now.getDayOfMonth)
@@ -45,7 +45,7 @@ class MapStateFunction extends RichMapFunction[(String, Int), (String, Int)] {
   }
 
   override def close(): Unit = {
-    state.clear()
+    println("close")
   }
 }
 
