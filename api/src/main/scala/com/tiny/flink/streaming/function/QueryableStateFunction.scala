@@ -17,7 +17,7 @@ class QueryableStateFunction extends RichMapFunction[(String, Int), (String, Int
   override def map(value: (String, Int)): (String, Int) = {
     val tmp = state
     val count = if (null == tmp.value()) 0 else tmp.value() + 1
-    state.update(count)
+    tmp.update(count)
     (value._1, count)
   }
 

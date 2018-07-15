@@ -1,12 +1,12 @@
 package com.tiny.flink.streaming
 
-import com.tiny.flink.streaming.function.QueryableStateFunction
+import com.tiny.flink.streaming.function.AggregateStateFunction
 import org.apache.flink.streaming.api.scala._
 
 /**
   * @author tiny.wang
   */
-object StatefulExp2 {
+object StatefulExp3 {
 
   def main(args: Array[String]) {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
@@ -15,9 +15,9 @@ object StatefulExp2 {
     val text = env.socketTextStream("localhost", 12345)
     val counts = text.flatMap(_.toUpperCase.split("\\W+"))
       .filter(_.nonEmpty)
-      .map((_, 1))
+      .map((_, (math.random * 100).toInt))
       .keyBy(0)
-      .map(QueryableStateFunction())
+      .map(AggregateStateFunction())
 
     counts.print
     env.execute("""Scala Stateful Computation Example""")
