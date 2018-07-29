@@ -4,7 +4,7 @@ import com.tiny.flink.streaming.model.AverageAccumulator
 import org.apache.flink.api.common.functions.RichAggregateFunction
 
 class AggregateFunction extends RichAggregateFunction[(String, Int), AverageAccumulator, Double] {
-  override def createAccumulator(): AverageAccumulator = new AverageAccumulator
+  override def createAccumulator(): AverageAccumulator = new AverageAccumulator(0, 0)
 
   override def add(value: (String, Int), accumulator: AverageAccumulator): AverageAccumulator = {
     accumulator.count += 1
@@ -17,7 +17,7 @@ class AggregateFunction extends RichAggregateFunction[(String, Int), AverageAccu
   }
 
   /**
-    * TODO merge invoke by what
+    * TODO merge invoke by what ?
     */
   override def merge(a: AverageAccumulator, b: AverageAccumulator): AverageAccumulator = {
     a.sum += b.sum

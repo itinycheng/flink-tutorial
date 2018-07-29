@@ -1,7 +1,5 @@
 package com.tiny.flink.window
 
-import java.util.concurrent.TimeUnit
-
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
 
@@ -15,10 +13,12 @@ object TimeWindow0 {
       .filter(_.nonEmpty)
       .map((_, (math.random * 10).toInt))
       .keyBy(0)
-      .timeWindow(Time.of(5, TimeUnit.SECONDS))
+      // NOTE - TINY: print Collection[(key, value)] of the last 5 seconds
+      .timeWindow(Time.seconds(5))
       .sum(1)
+
     counts.print
-    env.execute("""Scala WordCount from SocketTextStream Example""")
+    env.execute("""Time Window Example""")
   }
 
 }

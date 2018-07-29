@@ -1,6 +1,3 @@
 package com.tiny.flink.streaming.model
 
-class AverageAccumulator extends Serializable {
-  var sum: Long = _
-  var count: Long = _
-}
+class AverageAccumulator(var sum: Long, var count: Long) extends Serializable

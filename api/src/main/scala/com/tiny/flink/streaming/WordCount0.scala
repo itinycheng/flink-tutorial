@@ -1,6 +1,7 @@
 package com.tiny.flink.streaming
 
 import com.tiny.flink.streaming.function.WordSplitFunction
+import org.apache.flink.runtime.state.memory.MemoryStateBackend
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.scala._
 
@@ -57,6 +58,8 @@ object WordCount0 {
     env.setMaxParallelism(10)
     env.getConfig.disableForceKryo()
     env.getConfig.enableForceAvro()
+    env.getConfig.setAutoWatermarkInterval(3000)
+    env.setStateBackend(new MemoryStateBackend(100*1024*1024,false))
     env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
     env.getCheckpointConfig.setCheckpointInterval(10000)
     env.getCheckpointConfig.setCheckpointTimeout(8000)
