@@ -23,5 +23,3 @@ class AssignerWithPunctuatedFunction extends AssignerWithPunctuatedWatermarks[(L
 object AssignerWithPunctuatedFunction {
   def apply(): AssignerWithPunctuatedFunction = new AssignerWithPunctuatedFunction()
 }
-
-

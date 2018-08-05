@@ -7,6 +7,7 @@ import org.apache.flink.streaming.api.watermark.Watermark
   * NOTE - TINY:
   * 1. like as [[org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor]]
   * 2. several abstract class can use which implement AssignerWithPeriodicWatermarks
+  * BoundedOutOfOrdernessTimestampExtractor, AscendingTimestampExtractor, IngestionTimeExtractor
   *
   * @author tiny.wang
   */
