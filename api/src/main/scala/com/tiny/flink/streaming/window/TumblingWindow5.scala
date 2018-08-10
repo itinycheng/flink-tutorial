@@ -1,4 +1,4 @@
-package com.tiny.flink.window
+package com.tiny.flink.streaming.window
 
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.IngestionTimeExtractor

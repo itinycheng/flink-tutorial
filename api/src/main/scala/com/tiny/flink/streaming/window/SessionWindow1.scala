@@ -1,20 +1,20 @@
-package com.tiny.flink.window
+package com.tiny.flink.streaming.window
 
+import com.tiny.flink.streaming.assigner.DynamicTimeGapExtractor
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows
-import org.apache.flink.streaming.api.windowing.time.Time
+import org.apache.flink.streaming.api.windowing.assigners.EventTimeSessionWindows
 
 /**
   * NOTE - TINY:
   *
   * @author tiny.wang
   */
-object SlidingWindow1 {
+object SessionWindow1 {
 
   def main(args: Array[String]) {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
+    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     env.getConfig.setAutoWatermarkInterval(1000L)
     env.getConfig.setParallelism(1)
 
@@ -24,8 +24,8 @@ object SlidingWindow1 {
       .map((System.currentTimeMillis, _, 1))
       .assignAscendingTimestamps(_._1)
       .keyBy(1)
-      .window(SlidingProcessingTimeWindows.of(Time.seconds(10), Time.seconds(5),
-        Time.seconds(5)))
+      // ProcessingTimeSessionWindows
+      .window(EventTimeSessionWindows.withDynamicGap(DynamicTimeGapExtractor()))
       .sum(2)
 
     counts.print

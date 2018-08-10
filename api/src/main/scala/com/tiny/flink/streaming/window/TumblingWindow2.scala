@@ -1,20 +1,23 @@
-package com.tiny.flink.window
+package com.tiny.flink.streaming.window
 
-import com.tiny.flink.streaming.assigner.DynamicTimeGapExtractor
+import com.tiny.flink.streaming.function.AssignerWithPeriodicFunction
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.windowing.assigners.EventTimeSessionWindows
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
+import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
   * NOTE - TINY:
+  * periodic watermark
   *
   * @author tiny.wang
   */
-object SessionWindow1 {
+object TumblingWindow2 {
 
   def main(args: Array[String]) {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+    // NOTE - TINY: default watermark interval is 200ms
     env.getConfig.setAutoWatermarkInterval(1000L)
     env.getConfig.setParallelism(1)
 
@@ -22,9 +25,10 @@ object SessionWindow1 {
     val counts = text.flatMap(_.toUpperCase.split("\\W+"))
       .filter(_.nonEmpty)
       .map((System.currentTimeMillis, _, 1))
-      .assignAscendingTimestamps(_._1)
+      .assignTimestampsAndWatermarks(AssignerWithPeriodicFunction())
       .keyBy(1)
-      .window(EventTimeSessionWindows.withDynamicGap(DynamicTimeGapExtractor()))
+      //TumblingEventTimeWindows, TumblingProcessingTimeWindows
+      .window(TumblingEventTimeWindows.of(Time.seconds(5), Time.seconds(2)))
       .sum(2)
 
     counts.print
