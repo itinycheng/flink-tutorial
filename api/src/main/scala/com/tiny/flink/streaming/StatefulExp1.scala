@@ -1,6 +1,7 @@
 package com.tiny.flink.streaming
 
 import com.tiny.flink.streaming.function.MapStateFunction
+import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.scala._
 
 /**
@@ -11,6 +12,9 @@ object StatefulExp1 {
   def main(args: Array[String]) {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setParallelism(1)
+    env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
+    env.getCheckpointConfig.setCheckpointInterval(5000)
+    env.getCheckpointConfig.setMinPauseBetweenCheckpoints(100)
 
     val text = env.socketTextStream("localhost", 12345)
     val counts = text.flatMap(_.toUpperCase.split("\\W+"))
