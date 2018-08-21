@@ -28,7 +28,7 @@ object TumblingWindow7 {
     val counts = text.flatMap(_.toUpperCase.split("\\W+"))
       .filter(_.nonEmpty)
       .map(Cell(System.currentTimeMillis - (math.random * 10000).toLong, _, 1))
-      .assignTimestampsAndWatermarks(new Assigner)
+      .assignTimestampsAndWatermarks(assigner)
       .keyBy(1)
       .window(TumblingEventTimeWindows.of(Time.seconds(5)))
       //.trigger(EventTimeTrigger.create())
@@ -49,18 +49,21 @@ object TumblingWindow7 {
     env.execute("""Time Window Example""")
 
   }
-}
 
-class Assigner extends AssignerWithPeriodicWatermarks[Cell] {
+  def assigner: AssignerWithPeriodicWatermarks[Cell] = {
+    new AssignerWithPeriodicWatermarks[Cell] {
 
-  var currentMaxTimestamp: Long = _
+      var currentMaxTimestamp: Long = _
 
-  override def getCurrentWatermark: Watermark = new Watermark(currentMaxTimestamp)
+      override def getCurrentWatermark: Watermark = new Watermark(currentMaxTimestamp)
 
-  override def extractTimestamp(element: Cell, previousElementTimestamp: Long): Long = {
-    currentMaxTimestamp = math.max(element.ts, currentMaxTimestamp)
-    element.ts
+      override def extractTimestamp(element: Cell, previousElementTimestamp: Long): Long = {
+        currentMaxTimestamp = math.max(element.ts, currentMaxTimestamp)
+        element.ts
+      }
+    }
   }
+
 }
 
 class Delta extends DeltaFunction[Cell] {
