@@ -9,3 +9,4 @@ tmp
 *.ipr
 *.iws
 *.iml
+api/dependency-reduced-pom.xml
