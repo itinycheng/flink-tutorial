@@ -42,7 +42,7 @@ object GmvCalc {
 
     val sum = env.socketTextStream(host, port)
       .map(toOrder _)
-      .filter(order => !exists(order))
+      .filter(order => isNewcomer(order))
       .assignTimestampsAndWatermarks(assignWatermark)
       .keyBy(_.orderId.hashCode % 2)
       .window(TumblingEventTimeWindows.of(Time.days(1)))
@@ -85,10 +85,14 @@ object GmvCalc {
     }
   }
 
-  def exists(order: Order): Boolean = {
-    val b = orderSet.contains(order.orderId)
-    orderSet += order.orderId
-    b
+  def isNewcomer(order: Order): Boolean = {
+    Option(order) match {
+      case Some(x) =>
+        val b = orderSet.contains(x.orderId)
+        orderSet += x.orderId
+        !b
+      case None => false
+    }
   }
 
   def toOrder(str: String): Order = {
