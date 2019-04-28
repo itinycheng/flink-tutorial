@@ -13,11 +13,11 @@ object HiveHCatalogSQL {
     val tableEnv = TableEnvironment.getTableEnvironment(env)
 
     val dataSet = env.createInput(new HCatInputFormat[(Int, Int, String, String)]("analytics",
-      "tmp_person", new HiveConf))
-    tableEnv.registerDataSet("tmp_person", dataSet)
-    tableEnv.sqlUpdate("insert into tmp_person values(1, 20, 'tiny', '20190413')")
+      "tmp_student", new HiveConf))
+    tableEnv.registerDataSet("tmp_student", dataSet)
+    tableEnv.sqlUpdate("insert into tmp_student values(1, 20, 'tiny', '20190413')")
 
-    val table = tableEnv.sqlQuery("select id from tmp_person")
+    val table = tableEnv.sqlQuery("select id from tmp_student")
     table.toDataSet[Int].print()
   }
 }
