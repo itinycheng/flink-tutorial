@@ -34,10 +34,16 @@
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <scala-maven-plugin.version>3.3.2</scala-maven-plugin.version>
         <build-helper-maven-plugin.version>1.11</build-helper-maven-plugin.version>
+        <hive.version>3.1.1</hive.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.hive</groupId>
+                <artifactId>hive-exec</artifactId>
+                <version>${hive.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-hcatalog_${scala.binary.version}</artifactId>
@@ -46,15 +52,18 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.flink</groupId>
+                <artifactId>flink-hadoop-compatibility_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
                 <artifactId>flink-connector-filesystem_${scala.binary.version}</artifactId>
                 <version>${flink.version}</version>
-                <scope>${flink.scope}</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-connector-hive_${scala.binary.version}</artifactId>
                 <version>${flink.version}</version>
-                <scope>${flink.scope}</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.flink</groupId>
@@ -171,6 +180,16 @@
                                 <goal>shade</goal>
                             </goals>
                             <configuration>
+                                <filters>
+                                    <filter>
+                                        <artifact>*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
                                 <transformers>
                                     <transformer
                                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
