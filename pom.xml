@@ -40,6 +40,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-json</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-csv</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-exec</artifactId>
                 <version>${hive.version}</version>
@@ -195,6 +205,7 @@
                                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                         <!--<mainClass>org.sonatype.haven.HavenCli</mainClass>-->
                                     </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 </transformers>
                             </configuration>
                         </execution>
