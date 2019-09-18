@@ -41,6 +41,11 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.flink</groupId>
+                <artifactId>flink-parquet_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
                 <artifactId>flink-json</artifactId>
                 <version>${flink.version}</version>
             </dependency>
@@ -73,7 +78,13 @@
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-connector-hive_${scala.binary.version}</artifactId>
-                <version>${flink.version}</version>
+                <version>1.10-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.flink</groupId>
+                        <artifactId>force-shading</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.flink</groupId>

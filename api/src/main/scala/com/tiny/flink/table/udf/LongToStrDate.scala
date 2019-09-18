@@ -9,7 +9,7 @@ import org.apache.flink.table.functions.{FunctionContext, ScalarFunction}
 
 class LongToStrDate extends ScalarFunction {
 
-  private val pattern: String = "yyyy-MM-dd HH:mm:ss"
+  private val pattern: String = "yyyy-MM-dd"
 
   override def open(context: FunctionContext): Unit = {
     println("open.")

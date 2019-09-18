@@ -1,6 +1,10 @@
 package com.tiny.flink
 
+import org.slf4j.{Logger, LoggerFactory}
+
 package object table {
+
+  lazy val logger: Logger = LoggerFactory.getLogger("")
 
   val kafkaServers = "172.0.0.1:9092,172.0.0.1:9092,172.0.0.1:9092"
 
