@@ -36,7 +36,7 @@ package object table {
           'connector.type' = 'kafka',
           'connector.version' = '0.8',
           'connector.topic' = '$activityTopic',
-          'connector.startup-mode' = 'earliest-offset',
+          'connector.startup-mode' = 'latest-offset',
           'connector.sink-partitioner' = 'fixed',
           'connector.properties.0.key' = 'fetch.message.max.bytes',
           'connector.properties.0.value' = '33554432',
