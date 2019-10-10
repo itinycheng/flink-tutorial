@@ -41,7 +41,8 @@ object HDFSSinkSQL1 {
         .withBucketAssignerAndPolicy(new DateTimeBucketAssigner[String]("yyyy-MM-dd", ZoneId.of("+8")),
           DefaultRollingPolicy.create()
             .withRolloverInterval(60 * 60 * 1000)
-            .withInactivityInterval(2 * 60 * 1000)
+            .withInactivityInterval(10 * 60 * 1000)
+            .withMaxPartSize( 256 * 1024 * 1024)
             .build()
         ).withBucketCheckInterval(2000)
         .build

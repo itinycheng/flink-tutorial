@@ -8,11 +8,13 @@ package object table {
 
   val kafkaServers = "172.0.0.1:9092,172.0.0.1:9092,172.0.0.1:9092"
 
-  val kafkaZookeepers = "172.0.0.1:2181,172.0.0.1:2181,172.0.0.1:2181/kafka8"
+  val kafkaZookeepers = "172.0.0.1:2181,172.0.0.1:2181,172.0.0.1:2181/kafka08"
 
   val activityTopic = "analytics_activity_log"
 
   val deviceTopic = "analytics_device_log"
+
+  val userTopic="analytics_user_log"
 
   val consumerKafkaSQL_83 = "KafkaSQL-83"
 
@@ -83,6 +85,36 @@ package object table {
        |          'update-mode' = 'append',
        |          'format.type' = 'json',
        |          'format.schema' = 'ROW<deviceid VARCHAR, productdeviceoffset BIGINT, starttime STRING>'
+       |       )
+       |""".stripMargin
+
+  val userTableSchema: String =
+    s"""create table user_log(
+       |         `user` map<string,string>,
+       |         `device` map<string,string>,
+       |         `app` map<string,string>,
+       |         `event` ROW<eventtype string,attribute map<string,string>, eventdatas array<ROW<`key` string,`value` string, `type` string>>>
+       |       ) with (
+       |          'connector.type' = 'kafka',
+       |          'connector.version' = '0.8',
+       |          'connector.topic' = '$userTopic',
+       |          'connector.startup-mode' = 'earliest-offset',
+       |          'connector.sink-partitioner' = 'fixed',
+       |          'connector.properties.0.key' = 'fetch.message.max.bytes',
+       |          'connector.properties.0.value' = '33554432',
+       |          'connector.properties.1.key' = 'zookeeper.connect',
+       |          'connector.properties.1.value' = '$kafkaZookeepers',
+       |          'connector.properties.2.key' = 'socket.receive.buffer.bytes',
+       |          'connector.properties.2.value' = '1048576',
+       |          'connector.properties.3.key' = 'group.id',
+       |          'connector.properties.3.value' = '$consumerKafkaSQL_83',
+       |          'connector.properties.4.key' = 'bootstrap.servers',
+       |          'connector.properties.4.value' = '$kafkaServers',
+       |          'connector.properties.5.key' = 'auto.commit.interval.ms',
+       |          'connector.properties.5.value' = '10000',
+       |          'update-mode' = 'append',
+       |          'format.type' = 'json',
+       |          'format.schema' = 'ROW<user MAP<STRING,STRING>, device MAP<STRING,STRING>, app MAP<STRING,STRING>, event ROW<eventtype STRING, attribute MAP<STRING,STRING>, eventdatas OBJECT_ARRAY<ROW<key STRING,value STRING,type STRING>>>>'
        |       )
        |""".stripMargin
 }
