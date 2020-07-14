@@ -5,7 +5,7 @@ import java.util.Properties
 import org.apache.flink.api.java.typeutils.RowTypeInfo
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.scala.{StreamTableEnvironment, _}
+import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, _}
 import org.apache.flink.table.api.{DataTypes, TableSchema}
 import org.apache.flink.table.descriptors.{Csv, Kafka, Schema}
 import org.apache.flink.types.Row
@@ -31,7 +31,7 @@ object KafkaSQL1 {
       .fieldDelimiter(','))
       .withSchema(new Schema().schema(schema))
       .inAppendMode()
-      .registerTableSource("activity_log")
+      .createTemporaryTable("activity_log")
     val table = tableEnv.sqlQuery("select deviceid, productdeviceoffset from activity_log where productid = 3281358")
     table.toAppendStream[Row].print()
 

@@ -3,7 +3,7 @@ package com.tiny.flink.table
 import com.tiny.flink.table.udf.LongToStrDate
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.scala._
+import org.apache.flink.table.api.bridge.scala._
 import org.apache.flink.table.catalog.hive.HiveCatalog
 import org.apache.flink.types.Row
 

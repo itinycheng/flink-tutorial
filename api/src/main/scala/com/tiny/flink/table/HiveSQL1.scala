@@ -1,9 +1,8 @@
 package com.tiny.flink.table
 
 import org.apache.flink.api.scala.ExecutionEnvironment
-import org.apache.flink.table.api.scala.BatchTableEnvironment
+import org.apache.flink.table.api.bridge.scala.BatchTableEnvironment
 import org.apache.flink.table.catalog.hive.HiveCatalog
-
 /**
  * insert into partition table
  * sourceTable data format: textFile

@@ -11,9 +11,8 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSin
 import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.DateTimeBucketAssigner
 import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.scala.{StreamTableEnvironment, _}
+import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, _}
 import org.apache.flink.types.Row
-
 /**
  * read HadoopRecoverableFsDataOutputStream to learn detail implementation of the OutputStream in `Encoder.encode(IN, OutputStream)`
  * HDFS data write cache config: io.file.buffer.size, default: 4096, current: 131072
@@ -38,11 +37,11 @@ object HDFSSinkSQL1 {
       .filter(_.nonEmpty)
       .addSink(StreamingFileSink.forRowFormat(new Path("hdfs:///user/hadoop/analytics/kafka-data"),
         new SimpleStringEncoder[String]())
-        .withBucketAssignerAndPolicy(new DateTimeBucketAssigner[String]("yyyy-MM-dd", ZoneId.of("+8")),
+        .withNewBucketAssignerAndPolicy(new DateTimeBucketAssigner[String]("yyyy-MM-dd", ZoneId.of("+8")),
           DefaultRollingPolicy.create()
             .withRolloverInterval(60 * 60 * 1000)
             .withInactivityInterval(10 * 60 * 1000)
-            .withMaxPartSize( 256 * 1024 * 1024)
+            .withMaxPartSize(256 * 1024 * 1024)
             .build()
         ).withBucketCheckInterval(2000)
         .build

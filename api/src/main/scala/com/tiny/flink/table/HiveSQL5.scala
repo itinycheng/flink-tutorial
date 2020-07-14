@@ -1,7 +1,7 @@
 package com.tiny.flink.table
 
 import org.apache.flink.api.scala._
-import org.apache.flink.table.api.scala._
+import org.apache.flink.table.api.bridge.scala._
 import org.apache.flink.table.catalog.hive.HiveCatalog
 
 /**
