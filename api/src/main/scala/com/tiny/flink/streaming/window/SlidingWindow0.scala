@@ -19,13 +19,12 @@ object SlidingWindow0 {
     env.getConfig.setParallelism(1)
 
     val text = env.socketTextStream("localhost", 12345)
-    val counts = text.flatMap(_.toUpperCase.split("\\W+"))
-      .filter(_.nonEmpty)
-      .map((System.currentTimeMillis, _, 1))
+    val counts = text.map(_.split(","))
+      .filter(arr => arr.nonEmpty && arr.length == 2)
+      .map(arr => (arr(0).toInt, arr(1), 1))
       .assignAscendingTimestamps(_._1)
       .keyBy(1)
-      .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5),
-        Time.seconds(5)))
+      .window(SlidingEventTimeWindows.of(Time.milliseconds(10), Time.milliseconds(5)))
       .sum(2)
 
     counts.print

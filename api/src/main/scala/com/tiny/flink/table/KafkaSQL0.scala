@@ -8,7 +8,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.RowTypeInfo
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.streaming.connectors.kafka.Kafka08TableSource
+import org.apache.flink.streaming.connectors.kafka.KafkaTableSource
 import org.apache.flink.table.api.bridge.scala.{StreamTableEnvironment, _}
 import org.apache.flink.table.api.{DataTypes, TableSchema}
 import org.apache.flink.types.Row
@@ -22,7 +22,7 @@ object KafkaSQL0 {
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     val tableEnv = StreamTableEnvironment.create(env)
-    val kafka08 = new Kafka08TableSource(schema, activityTopic, kafkaProps, new JsonSer)
+    val kafka08 = new KafkaTableSource(schema, activityTopic, kafkaProps, new JsonSer)
     tableEnv.registerTableSource("activity_log", kafka08)
     val table = tableEnv.sqlQuery("select * from activity_log where productid = 3281358")
 
