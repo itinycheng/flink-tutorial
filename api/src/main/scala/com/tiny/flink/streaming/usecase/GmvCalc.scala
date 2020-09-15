@@ -45,7 +45,7 @@ object GmvCalc {
       .filter(order => isNewcomer(order))
       .assignTimestampsAndWatermarks(assignWatermark)
       .keyBy(_.orderId.hashCode % 2)
-      .window(TumblingEventTimeWindows.of(Time.days(1)))
+      .window(TumblingEventTimeWindows.of(Time.days(1), Time.hours(-8)))
       .trigger(customTrigger)
       .fold(0d)((sum, order) => sum + order.price)
 

@@ -6,7 +6,8 @@ import org.apache.flink.api.common.eventtime._
 import org.apache.flink.api.common.functions.CoGroupFunction
 import org.apache.flink.api.common.state.ValueStateDescriptor
 import org.apache.flink.api.common.typeinfo.{TypeHint, TypeInformation}
-import org.apache.flink.streaming.api.TimeCharacteristic
+import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
+import org.apache.flink.runtime.state.StateBackend
 import org.apache.flink.streaming.api.datastream.CoGroupedStreams.TaggedUnion
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, _}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
@@ -14,6 +15,7 @@ import org.apache.flink.streaming.api.windowing.evictors.CountEvictor
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.triggers.{CountTrigger, Trigger, TriggerResult}
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
+import org.apache.flink.streaming.api.{CheckpointingMode, TimeCharacteristic}
 import org.apache.flink.util.Collector
 
 /**
@@ -29,8 +31,17 @@ object CoGroupStreamInWindow {
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
-    env.getConfig.setAutoWatermarkInterval(2000)
+    env.setMaxParallelism(4096)
     env.setParallelism(1)
+    env.getConfig.setAutoWatermarkInterval(20000)
+
+    val stateBackend = new RocksDBStateBackend("file:///Users/tiny/rocksdb", false)
+    // NOTE - TINY: write state to a random dir
+    stateBackend.setDbStoragePaths("/Users/tiny/rocksdb/db1", "/Users/tiny/rocksdb/db2")
+    env.setStateBackend(stateBackend.asInstanceOf[StateBackend])
+    env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
+    env.getCheckpointConfig.setCheckpointInterval(10000)
+    env.getCheckpointConfig.setCheckpointTimeout(15000)
 
     val stream1 = env.socketTextStream("localhost", 12345)
       .map(_.split(","))
