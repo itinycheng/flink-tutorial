@@ -1,6 +1,7 @@
 package com.tiny.flink.streaming.join
 
 import java.lang
+import java.time.Duration
 
 import org.apache.flink.api.common.eventtime._
 import org.apache.flink.api.common.functions.CoGroupFunction
@@ -42,6 +43,7 @@ object CoGroupStreamInWindow {
     env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
     env.getCheckpointConfig.setCheckpointInterval(10000)
     env.getCheckpointConfig.setCheckpointTimeout(15000)
+    //env.disableOperatorChaining()
 
     val stream1 = env.socketTextStream("localhost", 12345)
       .map(_.split(","))
@@ -68,8 +70,9 @@ object CoGroupStreamInWindow {
     env.execute("coGroupStreamInWindow")
   }
 
+  // NOTE - TINY: more about WatermarkStrategyWithIdleness and StreamStatus.IDLE, StreamStatus.ACTIVE
   def orderWatermarkStrategy: WatermarkStrategy[Order] = {
-    new WatermarkStrategy[Order] {
+    val strategy = new WatermarkStrategy[Order] {
       override def createWatermarkGenerator(context: WatermarkGeneratorSupplier.Context): WatermarkGenerator[Order] = {
         new WatermarkGenerator[Order] {
 
@@ -89,6 +92,7 @@ object CoGroupStreamInWindow {
         }
       }
 
+      // NOTE - TINY: element: current elem , recordTimestamp: element timestamp assigned
       override def createTimestampAssigner(context: TimestampAssignerSupplier.Context): TimestampAssigner[Order] = {
         new TimestampAssigner[Order] {
           override def extractTimestamp(element: Order, recordTimestamp: Long): Long = {
@@ -97,6 +101,7 @@ object CoGroupStreamInWindow {
         }
       }
     }
+    strategy.withIdleness(Duration.ofSeconds(10))
   }
 
   def paymentWatermarkStrategy: WatermarkStrategy[Payment] = {
