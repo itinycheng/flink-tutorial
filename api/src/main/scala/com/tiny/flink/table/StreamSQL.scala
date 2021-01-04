@@ -17,20 +17,22 @@
  */
 package com.tiny.flink.table
 
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.table.api._
 import org.apache.flink.table.api.bridge.scala._
+import org.apache.flink.table.data.RowData
 
 /**
-  * Simple example for demonstrating the use of SQL on a Stream Table in Scala.
-  *
-  * This example shows how to:
-  *  - Convert DataStreams to Tables
-  *  - Register a Table under a name
-  *  - Run a StreamSQL query on the registered Table
-  *
-  */
+ * Simple example for demonstrating the use of SQL on a Stream Table in Scala.
+ *
+ * This example shows how to:
+ *  - Convert DataStreams to Tables
+ *  - Register a Table under a name
+ *  - Run a StreamSQL query on the registered Table
+ *
+ */
 object StreamSQL {
 
   // *************************************************************************
@@ -39,9 +41,15 @@ object StreamSQL {
 
   def main(args: Array[String]): Unit = {
 
+    val params = ParameterTool.fromArgs(args)
+
     // set up execution environment
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    val tEnv = StreamTableEnvironment.create(env)
+    val settings = EnvironmentSettings.newInstance()
+      .useBlinkPlanner()
+      .inStreamingMode()
+      .build()
+    val tEnv = StreamTableEnvironment.create(env, settings)
 
     val orderA: DataStream[Order] = env.fromCollection(Seq(
       Order(1L, "beer", 3),
@@ -54,18 +62,17 @@ object StreamSQL {
       Order(4L, "beer", 1)))
 
     // convert DataStream to Table
-    var tableA = tEnv.fromDataStream(orderA, 'user, 'product, 'amount)
+    val tableA = tEnv.fromDataStream(orderA, 'user, 'product, 'amount)
     // register DataStream as Table
     tEnv.registerDataStream("OrderB", orderB, 'user, 'product, 'amount)
 
     // union the two tables
-    val result = tEnv.sqlQuery(
-      s"SELECT * FROM $tableA WHERE amount > 2 UNION ALL " +
-        "SELECT * FROM OrderB WHERE amount < 2")
+    val result = tEnv.sqlQuery(s"select concat(cast(user as string), product) from $tableA where amount > 2")
 
-    result.toAppendStream[Order].print()
+    result.toAppendStream[RowData].map(_.getString(0)).print()
 
     env.execute()
+
   }
 
   // *************************************************************************
