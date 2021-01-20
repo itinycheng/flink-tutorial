@@ -18,11 +18,11 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.mutable
 
 /**
-  *
-  * input data format: `timestamp,orderId,productId,price`
-  *
-  * @author tiny.wang
-  */
+ *
+ * input data format: `timestamp,orderId,productId,price`
+ *
+ * @author tiny.wang
+ */
 object GmvCalc {
 
   val LOGGER: Logger = LoggerFactory.getLogger("")
@@ -47,7 +47,7 @@ object GmvCalc {
       .keyBy(_.orderId.hashCode % 2)
       .window(TumblingEventTimeWindows.of(Time.days(1), Time.hours(-8)))
       .trigger(customTrigger)
-      .fold(0d)((sum, order) => sum + order.price)
+      .reduce((sum, order) => Order(order.orderId, sum.price + order.price, order.createTime))
 
     sum.print
     env.execute("""Calc Gmv Example""")
@@ -121,7 +121,6 @@ object GmvCalc {
   def setEnvConf(env: StreamExecutionEnvironment): Unit = {
     env.setParallelism(1)
     env.setMaxParallelism(1)
-    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     env.setStateBackend(new MemoryStateBackend(100 * 1024 * 1024, false).asInstanceOf[StateBackend])
     env.getConfig.enableForceKryo()
     env.getConfig.disableForceAvro()

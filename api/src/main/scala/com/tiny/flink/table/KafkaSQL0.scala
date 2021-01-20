@@ -14,16 +14,18 @@ import org.apache.flink.table.api.{DataTypes, TableSchema}
 import org.apache.flink.types.Row
 
 /**
+ * TODO
+ *
  * read CVS data from Kafka
  *
- **/
+ * */
 object KafkaSQL0 {
 
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     val tableEnv = StreamTableEnvironment.create(env)
     val kafka08 = new KafkaTableSource(schema, activityTopic, kafkaProps, new JsonSer)
-    tableEnv.registerTableSource("activity_log", kafka08)
+    // tableEnv.registerTableSource("activity_log", kafka08)
     val table = tableEnv.sqlQuery("select * from activity_log where productid = 3281358")
 
     table.toAppendStream[Row].print()

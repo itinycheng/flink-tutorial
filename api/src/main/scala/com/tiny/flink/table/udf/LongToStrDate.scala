@@ -20,8 +20,6 @@ class LongToStrDate extends ScalarFunction {
 
   def eval(timestamp: String): String = eval(timestamp.toLong)
 
-  override def getResultType(signature: Array[Class[_]]): TypeInformation[_] = Types.STRING
-
   override def close(): Unit = {
     println("close.")
   }
