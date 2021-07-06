@@ -1,4 +1,4 @@
-flink-learn
+flink-tutorial
 ================
 在Flink学习过程中落地的一些代码，主要是Flink官方的Demo和扩展思考；
 
@@ -12,7 +12,7 @@ flink-learn
 
 ### 模块说明
 
-- flink-learn
+- flink-tutorial
     - api：flink api的使用，包含 `operator`, `window`, `state`,`sql`, etc.
 
 ### 编译说明：
